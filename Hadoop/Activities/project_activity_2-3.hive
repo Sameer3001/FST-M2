@@ -1,0 +1,29 @@
+1 -- Drop tables
+2 DROP TABLE episodes;
+3 DROP TABLE episodeIV;
+4
+5 --Activity 1:
+6 --Creating the table
+7 CREATE TABLE episodes (name STRING, line STRING)
+8 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' TBLPROPERTIES ("skip.header.line.count"="2");
+9
+10 --Load all 3 text files into the table
+11 LOAD DATA LOCAL INPATH '/root/inputs/episodeIV_dialogues.txt' INTO TABLE episodes;
+12 LOAD DATA LOCAL INPATH '/root/inputs/episodeV_dialogues.txt' INTO TABLE episodes;
+13 LOAD DATA LOCAL INPATH '/root/inputs/episodeVI_dialogues.txt' INTO TABLE episodes;
+14 
+15 --Generate output and export it
+16 INSERT OVERWRITE LOCAL DIRECTORY '/root/HiveOutput1' ROW FORMAT DELIMITED FIELDS TERMINATED BY 	'\t'
+17 SELECT name, COUNT(no_of_lines) AS no_of_lines from episodes GROUP BY name ORDER BY no_of_lines   	DESC;
+18
+19
+20 --Activity 2:
+21 --For Episode IV
+22 CREATE TABLE episodeIV (name STRING, line STRING)
+23 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' TBLPROPERTIES ("skip.header.line.count"="2");
+24 LOAD DATA LOCAL INPATH '/root/inputs/episodeIV_dialogues.txt' INTO TABLE episodeIV;
+25
+26 INSERT OVERWRITE LOCAL DIRECTORY '/root/HiveOutput2'
+27 SELECT COUNT(*) FROM episodeIV WHERE INSTR(line, 'Luke')>0;
+28 --SELECT COUNT(*) FROM episodeIV WHERE line LIKE '%Luke%';
+29 --Output: 56
